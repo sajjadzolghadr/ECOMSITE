@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from django.db.models import Q
+from django.core.paginator import Paginator
 from .models import Product
 # Create your views here.
 def index(request):
@@ -12,4 +13,7 @@ def index(request):
             Q(category__icontains=search) |
             Q(description__icontains=search)
         )
+    paginator = Paginator(products, 4) 
+    page_number = request.GET.get("page")
+    products = paginator.get_page(page_number)
     return render(request,'shop/index.html',{'products':products})
