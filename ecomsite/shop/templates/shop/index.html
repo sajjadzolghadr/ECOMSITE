@@ -16,7 +16,27 @@
     <h1 class="text-center mb-5 fw-bold">
         Our Products
     </h1>
+    <div class="row mb-4">
+    <div class="col-md-6 mx-auto">
 
+        <form method="GET">
+            <div class="input-group">
+                <input
+                    type="text"
+                    class="form-control"
+                    name="search"
+                    placeholder="Search products..."
+                    value="{{ request.GET.search }}"
+                >
+
+             <button class="btn btn-dark ms-2" type="submit">
+                 Search
+             </button>
+            </div>
+        </form>
+
+    </div>
+    </div> 
     <div class="row g-4">
 
         {% for product in products %}
