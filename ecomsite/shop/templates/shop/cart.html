@@ -39,7 +39,7 @@
                 <th>Category</th>
                 <th>Price</th>
                 <th>Quantity</th>
-                <th>Total</th>
+                <th>Action</th>
             </tr>
         </thead>
 
@@ -62,6 +62,11 @@
             <td>$ {{ item.product.price }}</td>
 
             <td>{{ item.quantity }}</td>
+            <td>
+              <a href="{% url 'remove_from_cart' item.product.id %}"class="btn btn-danger btn-sm">
+                 Remove
+              </a>
+            </td>
 
             <td>
                 $ {% widthratio item.product.price 1 item.quantity %}

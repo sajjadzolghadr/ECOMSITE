@@ -1,4 +1,4 @@
-from django.shortcuts import render,get_object_or_404
+from django.shortcuts import render,get_object_or_404,redirect
 from django.db.models import Q
 from django.core.paginator import Paginator
 from .models import Product
@@ -60,3 +60,17 @@ def cart(request):
         "items": items,
     "cart_count": cart_count,
     })
+
+def remove_from_cart(request, id):
+    cart = request.session.get("cart", {})
+
+    id = str(id)
+
+    if id in cart:
+        del cart[id]
+
+    request.session["cart"] = cart
+
+    return redirect("cart")
+
+
