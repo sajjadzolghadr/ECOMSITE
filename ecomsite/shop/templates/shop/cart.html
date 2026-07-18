@@ -61,7 +61,21 @@
 
             <td>$ {{ item.product.price }}</td>
 
-            <td>{{ item.quantity }}</td>
+            <td>
+
+                <a href="{% url 'decrease_quantity' item.product.id %}"class="btn btn-sm btn-outline-danger">
+                    -
+                </a>
+
+               <span class="mx-2">
+                {{ item.quantity }}
+               </span>
+
+               <a href="{% url 'increase_quantity' item.product.id %}" class="btn btn-sm btn-outline-success">
+                   +
+               </a>
+
+            </td>
             <td>
               <a href="{% url 'remove_from_cart' item.product.id %}"class="btn btn-danger btn-sm">
                  Remove

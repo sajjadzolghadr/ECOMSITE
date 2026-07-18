@@ -73,4 +73,30 @@ def remove_from_cart(request, id):
 
     return redirect("cart")
 
+def increase_quantity(request, id):
+    cart = request.session.get("cart", {})
 
+    id = str(id)
+
+    if id in cart:
+        cart[id] += 1
+
+    request.session["cart"] = cart
+
+    return redirect("cart")
+
+def decrease_quantity(request, id):
+    cart = request.session.get("cart", {})
+
+    id = str(id)
+
+    if id in cart:
+
+        if cart[id] > 1:
+            cart[id] -= 1
+        else:
+            del cart[id]
+
+    request.session["cart"] = cart
+
+    return redirect("cart")
