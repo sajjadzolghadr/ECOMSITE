@@ -47,18 +47,24 @@ def cart(request):
     cart_count = sum(cart.values())
 
     items = []
+    total_price = 0
 
     for product_id, quantity in cart.items():
         product = Product.objects.get(id=product_id)
+        
+        subtotal = product.price * quantity
+        total_price += subtotal
 
         items.append({
             "product": product,
             "quantity": quantity,
+            "subtotal": subtotal,
         })
 
     return render(request, "shop/cart.html", {
         "items": items,
-    "cart_count": cart_count,
+        "cart_count": cart_count,
+        "total_price": total_price,
     })
 
 def remove_from_cart(request, id):
