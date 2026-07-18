@@ -1,7 +1,7 @@
 from django.shortcuts import render,get_object_or_404,redirect
 from django.db.models import Q
 from django.core.paginator import Paginator
-from .models import Product
+from .models import Product,Order,OrderItem
 from django.http import JsonResponse
 
 # Create your views here.
@@ -106,3 +106,30 @@ def decrease_quantity(request, id):
     request.session["cart"] = cart
 
     return redirect("cart")
+
+def checkout(request):
+    cart = request.session.get("cart", {})
+
+    if not cart:
+        return redirect("cart")
+
+    total_price = 0
+
+    order = Order.objects.create(total_price=0)
+
+    for product_id, quantity in cart.items():
+
+        product = Product.objects.get(id=product_id)
+
+        subtotal = product.price * quantity
+
+        total_price += subtotal
+
+        OrderItem.objects.create(order=order,product=product,quantity=quantity,price=product.price,)
+
+    order.total_price = total_price
+    order.save()
+
+    request.session["cart"] = {}
+
+    return redirect("index")
