@@ -3,6 +3,7 @@ from django.db.models import Q
 from django.core.paginator import Paginator
 from .models import Product,Order,OrderItem
 from django.http import JsonResponse
+from .forms import CheckoutForm
 
 # Create your views here.
 def index(request):
@@ -108,28 +109,47 @@ def decrease_quantity(request, id):
     return redirect("cart")
 
 def checkout(request):
+
     cart = request.session.get("cart", {})
 
     if not cart:
         return redirect("cart")
 
-    total_price = 0
+    if request.method == "POST":
 
-    order = Order.objects.create(total_price=0)
+        form = CheckoutForm(request.POST)
 
-    for product_id, quantity in cart.items():
+        if form.is_valid():
+            total_price = 0
 
-        product = Product.objects.get(id=product_id)
+            
 
-        subtotal = product.price * quantity
+            for product_id, quantity in cart.items():
 
-        total_price += subtotal
+                product = Product.objects.get(id=product_id)
 
-        OrderItem.objects.create(order=order,product=product,quantity=quantity,price=product.price,)
+                total_price += product.price * quantity
 
-    order.total_price = total_price
-    order.save()
 
-    request.session["cart"] = {}
+            order = form.save(commit=False)
+            order.total_price = total_price
+            order.save()
 
-    return redirect("index")
+            for product_id, quantity in cart.items():
+                product = Product.objects.get(id=product_id)
+                OrderItem.objects.create(
+                    order=order,
+                    product=product,
+                    quantity=quantity,
+                    price=product.price,
+                )
+            request.session["cart"] = {}
+            return redirect("index")
+
+    else:
+
+        form = CheckoutForm()
+
+    return render(request, "shop/checkout.html", {
+        "form": form,
+    })
